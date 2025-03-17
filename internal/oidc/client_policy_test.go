@@ -33,6 +33,7 @@ func TestNewClientAuthorizationPolicy(t *testing.T) {
 						Policy: "one_factor",
 						Subjects: [][]string{
 							{"user:john"},
+							{"user:bob"},
 						},
 					},
 					{
@@ -50,6 +51,9 @@ func TestNewClientAuthorizationPolicy(t *testing.T) {
 							{
 								Subjects: []authorization.SubjectMatcher{authorization.AccessControlUser{Name: "john"}},
 							},
+							{
+								Subjects: []authorization.SubjectMatcher{authorization.AccessControlUser{Name: "bob"}},
+							},
 						},
 						Policy: authorization.OneFactor,
 					},
@@ -62,6 +66,7 @@ func TestNewClientAuthorizationPolicy(t *testing.T) {
 			func(t *testing.T, actual oidc.ClientAuthorizationPolicy) {
 				assert.Equal(t, authorization.TwoFactor, actual.GetRequiredLevel(authorization.Subject{}))
 				assert.Equal(t, authorization.OneFactor, actual.GetRequiredLevel(authorization.Subject{Username: "john"}))
+				assert.Equal(t, authorization.OneFactor, actual.GetRequiredLevel(authorization.Subject{Username: "bob"}))
 				assert.Equal(t, authorization.OneFactor, actual.GetRequiredLevel(authorization.Subject{Username: "fred", IP: lanip}))
 			},
 		},
